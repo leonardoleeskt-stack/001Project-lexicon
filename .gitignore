@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+*.pyc
+launch-error.log
+tests/_selftest_out/
+tests/_webui_out/
+tests/_unit_out.dat
