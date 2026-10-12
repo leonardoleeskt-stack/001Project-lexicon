@@ -18,8 +18,9 @@ from .mask import ClassifiedTerm
 from .pipeline import DEFAULT_INPUT_HINT, DEFAULT_OUTPUT_DIR, export_bundle, process_paths
 
 IMPORT_TIP = (
-    "导入步骤：设置 > 时间和语言 > 语言 > 中文选项 > 微软拼音 > "
-    "词库和自学习 > 用户自定义短语 > 导入 UserDefinedPhrase.dat"
+    "Import steps: Settings > Time & language > Language > Chinese options > "
+    "Microsoft Pinyin > Lexicon and self-learning > User-defined phrases > "
+    "Import UserDefinedPhrase.dat"
 )
 
 # Session state for the single local user
@@ -77,7 +78,7 @@ def browse_folder(initial: str = "") -> Optional[str]:
     ps_lines = [
         "Add-Type -AssemblyName System.Windows.Forms",
         "$d = New-Object System.Windows.Forms.FolderBrowserDialog",
-        "$d.Description = '选择文件夹'",
+        "$d.Description = 'Select folder'",
         "$d.ShowNewFolderButton = $true",
     ]
     if init:
@@ -146,22 +147,22 @@ def _do_browse(which: str, initial: str = "") -> dict:
         return {
             "ok": False,
             "cancelled": True,
-            "error": "文件夹浏览仅在 Windows 可用，请手动粘贴路径。",
+            "error": "Folder browse is only available on Windows; paste the path manually.",
         }
     path = browse_folder(start)
     if path is None:
         return {"ok": False, "cancelled": True}
     if _blocked(path):
-        return {"ok": False, "cancelled": True, "error": "不允许选择 E: 盘。"}
+        return {"ok": False, "cancelled": True, "error": "Selecting the E: drive is not allowed."}
     _STATE[which] = path
     return {"ok": True, "path": path, "which": which}
 
 
 def _do_scan(source: str) -> dict:
     if not source.strip():
-        return {"ok": False, "error": "请填写词表文件夹路径。"}
+        return {"ok": False, "error": "Please enter a glossary folder path."}
     if _blocked(source):
-        return {"ok": False, "error": "不允许扫描 E: 盘。"}
+        return {"ok": False, "error": "Scanning the E: drive is not allowed."}
     try:
         cands, held = process_paths([source.strip()])
     except Exception as e:
@@ -175,7 +176,7 @@ def _do_scan(source: str) -> dict:
         for c in cands
     ]
     _STATE["last_message"] = (
-        f"扫描完成：候选 {len(cands)} 条，暂扣 {len(held)} 条。核对后点「确认导出」。"
+        f"Scan done: {len(cands)} candidate(s), {len(held)} held back. Review, then click Confirm export."
     )
     return {
         "ok": True,
@@ -188,10 +189,10 @@ def _do_scan(source: str) -> dict:
 def _do_export(output: str, selected_flags: List[bool]) -> dict:
     cands_data = _STATE["candidates"]
     if not cands_data and not _STATE["held_back"]:
-        return {"ok": False, "error": "请先点「一键扫描」。"}
+        return {"ok": False, "error": "Please click Scan first."}
     out = (output or DEFAULT_OUTPUT_DIR).strip()
     if _blocked(out):
-        return {"ok": False, "error": "输出目录不可为 E: 盘。"}
+        return {"ok": False, "error": "Output directory cannot be the E: drive."}
 
     terms: List[ClassifiedTerm] = []
     for i, row in enumerate(cands_data):
@@ -216,8 +217,8 @@ def _do_export(output: str, selected_flags: List[bool]) -> dict:
 
     _open_dir(Path(result["output_dir"]))
     msg = (
-        f"已导出：候选 {result['candidate_count']}，.dat {result['dat_count']} 条\n"
-        f"目录：{result['output_dir']}\n\n{IMPORT_TIP}"
+        f"Exported: {result['candidate_count']} candidate(s), {result['dat_count']} in .dat\n"
+        f"Folder: {result['output_dir']}\n\n{IMPORT_TIP}"
     )
     _STATE["last_message"] = msg
     return {
@@ -229,11 +230,11 @@ def _do_export(output: str, selected_flags: List[bool]) -> dict:
 
 
 HTML_PAGE = r"""<!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>001Project 个人词库</title>
+<title>001Project Personal Lexicon</title>
 <style>
   :root { font-family: "Segoe UI", "Microsoft YaHei", sans-serif; }
   body { max-width: 820px; margin: 24px auto; padding: 0 16px; color: #222; }
@@ -270,41 +271,41 @@ HTML_PAGE = r"""<!DOCTYPE html>
 </style>
 </head>
 <body>
-  <h1>001Project 个人词库</h1>
+  <h1>001Project Personal Lexicon</h1>
 
   <div class="row">
     <div>
-      <label>词表文件夹</label>
+      <label>Glossary folder</label>
       <input type="text" id="source" value="__SOURCE__"/>
     </div>
     <div class="browse-wrap">
       <button type="button" class="browse" id="btnBrowseSource"
-              onclick="doBrowse('source')">浏览…</button>
+              onclick="doBrowse('source')">Browse…</button>
     </div>
   </div>
   <div class="row">
     <div>
-      <label>输出目录</label>
+      <label>Output folder</label>
       <input type="text" id="output" value="__OUTPUT__"/>
     </div>
     <div class="browse-wrap">
       <button type="button" class="browse" id="btnBrowseOutput"
-              onclick="doBrowse('output')">浏览…</button>
+              onclick="doBrowse('output')">Browse…</button>
     </div>
   </div>
 
-  <button class="big" id="btnScan" onclick="doScan()">一键扫描</button>
-  <div id="held">暂扣：尚未扫描</div>
+  <button class="big" id="btnScan" onclick="doScan()">Scan</button>
+  <div id="held">Held back: not scanned yet</div>
   <div id="list">
     <table>
-      <thead><tr><th style="width:48px">选</th><th>词</th><th>拼音</th></tr></thead>
+      <thead><tr><th style="width:48px">Sel</th><th>Term</th><th>Pinyin</th></tr></thead>
       <tbody id="tbody"></tbody>
     </table>
   </div>
-  <button class="big secondary" id="btnExport" onclick="doExport()">确认导出</button>
-  <div id="status">就绪：点「一键扫描」开始</div>
-  <p class="hint">本地工具 · 不扫整盘 · 不读 E: · 不写输入法 lex · 不上云<br/>
-  导入：设置 &gt; 时间和语言 &gt; 语言 &gt; 中文选项 &gt; 微软拼音 &gt; 词库和自学习 &gt; 用户自定义短语 &gt; 导入</p>
+  <button class="big secondary" id="btnExport" onclick="doExport()">Confirm export</button>
+  <div id="status">Ready: click Scan to begin</div>
+  <p class="hint">Local tool · no full-disk scan · no E: · no IME lex write · no cloud upload<br/>
+  Import: Settings &gt; Time &amp; language &gt; Language &gt; Chinese options &gt; Microsoft Pinyin &gt; Lexicon and self-learning &gt; User-defined phrases &gt; Import</p>
 
 <script>
 async function api(path, body) {
@@ -342,7 +343,7 @@ async function doBrowse(which) {
   const input = document.getElementById(inputId);
   btn.disabled = true;
   st.className = '';
-  st.textContent = '请在弹出的窗口中选择文件夹…';
+  st.textContent = 'Please choose a folder in the dialog…';
   try {
     const data = await api('/api/browse', {
       which: which,
@@ -351,19 +352,19 @@ async function doBrowse(which) {
     if (data.ok && data.path) {
       input.value = data.path;
       st.className = 'ok';
-      st.textContent = '已选择：' + data.path;
+      st.textContent = 'Selected: ' + data.path;
       return;
     }
     if (data.cancelled) {
       st.className = '';
-      st.textContent = data.error || '已取消选择';
+      st.textContent = data.error || 'Selection cancelled';
       return;
     }
     st.className = 'err';
-    st.textContent = data.error || '浏览失败';
+    st.textContent = data.error || 'Browse failed';
   } catch (e) {
     st.className = 'err';
-    st.textContent = '请求失败：' + e;
+    st.textContent = 'Request failed: ' + e;
   } finally {
     btn.disabled = false;
   }
@@ -374,22 +375,22 @@ async function doScan() {
   const st = document.getElementById('status');
   btn.disabled = true;
   st.className = '';
-  st.textContent = '扫描中…';
+  st.textContent = 'Scanning…';
   try {
     const data = await api('/api/scan', { source: document.getElementById('source').value });
     if (!data.ok) {
       st.className = 'err';
-      st.textContent = data.error || '扫描失败';
+      st.textContent = data.error || 'Scan failed';
       return;
     }
     renderCandidates(data.candidates);
     document.getElementById('held').textContent =
-      '暂扣（敏感/待判断，不导出）：' + data.held_count + ' 条';
+      'Held back (sensitive / needs review, not exported): ' + data.held_count;
     st.className = 'ok';
     st.textContent = data.message;
   } catch (e) {
     st.className = 'err';
-    st.textContent = '请求失败：' + e;
+    st.textContent = 'Request failed: ' + e;
   } finally {
     btn.disabled = false;
   }
@@ -402,7 +403,7 @@ async function doExport() {
   const selected = boxes.map(b => b.checked);
   btn.disabled = true;
   st.className = '';
-  st.textContent = '导出中…';
+  st.textContent = 'Exporting…';
   try {
     const data = await api('/api/export', {
       output: document.getElementById('output').value,
@@ -410,14 +411,14 @@ async function doExport() {
     });
     if (!data.ok) {
       st.className = 'err';
-      st.textContent = data.error || '导出失败';
+      st.textContent = data.error || 'Export failed';
       return;
     }
     st.className = 'ok';
     st.textContent = data.message;
   } catch (e) {
     st.className = 'err';
-    st.textContent = '请求失败：' + e;
+    st.textContent = 'Request failed: ' + e;
   } finally {
     btn.disabled = false;
   }

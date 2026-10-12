@@ -1,32 +1,43 @@
-# 001Project 个人词库
+# 001Project Personal Lexicon
 
-本地小工具：选定一小套材料文件夹 → 抽出短词/专名 → 确认后导出微软拼音「用户自定义短语」`.dat`。
+Local tool: pick a small authorized folder → extract short words/proper nouns → you confirm → export a Microsoft Pinyin user-defined phrase `.dat`. Does not scan the whole disk, read external E:, auto-write the IME lexicon, or upload to the cloud. Windows + Microsoft Pinyin. Needs local Python (or the included Start.bat). v0.1 trial.
 
-## 特点
+Chinese UI/docs: Chinese edition planned on Gitee (domestic).
 
-- 不扫整盘、不读 `E:`、不自动写入输入法 lex、不上云
-- 双击 `Start.bat` 用浏览器打开界面（无需 tkinter）
-- 可用「浏览…」选择词表文件夹与输出目录
-- 敏感/待判断词条暂扣，确认后再导出
+## Safety boundaries
 
-## 用法（Windows）
+- **No** full-disk scan
+- **No** reading the external `E:` drive
+- **No** auto-write to the IME lexicon (you import the `.dat` yourself)
+- **No** cloud upload
+- Browse folders; confirm before export
 
-1. 双击 `Start.bat`（若本机有 Python 3.10+ 即可；也可指向已有 venv）
-2. 选词表文件夹 → **一键扫描** → 核对候选 → **确认导出**
-3. 设置 → 时间和语言 → 语言 → 中文选项 → 微软拼音 → 词库和自学习 → 用户自定义短语 → **导入** `UserDefinedPhrase.dat`
-4. 失败时看同目录 `launch-error.log`
+## Features
 
-## 自检
+- Double-click `Start.bat` to open the browser UI (no tkinter)
+- Use **Browse…** to choose the glossary folder and output directory
+- Sensitive / uncertain terms are held back until you confirm export
+
+## Usage (Windows)
+
+1. Double-click `Start.bat` (needs Python 3.10+ on PATH, or an existing venv the script can find)
+2. Pick a glossary folder → **Scan** → review candidates → **Confirm export**
+3. Settings → Time & language → Language → Chinese options → Microsoft Pinyin → Lexicon and self-learning → User-defined phrases → **Import** `UserDefinedPhrase.dat`
+4. On failure, check `launch-error.log` in the same folder
+
+(`一键生成.bat` is a compatibility alias that calls `Start.bat`.)
+
+## Self-test
 
 ```bash
 python run.py selftest
 ```
 
-## 依赖
+## Dependencies
 
 - Python 3.10+
-- `pypinyin`（`vendor/` 内含 wheel，启动脚本可离线安装）
+- `pypinyin` (a wheel is included under `vendor/`; the start script can install offline)
 
-## 许可与范围
+## License & scope
 
-个人/内部试用工具。默认路径仅为示例，请用「浏览…」指向你自己授权的一小套材料。
+Personal / internal trial tool. Default paths are examples only — use **Browse…** to point at a small set of materials you authorize.

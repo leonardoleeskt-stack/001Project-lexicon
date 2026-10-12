@@ -66,7 +66,7 @@ class TestBrowse(unittest.TestCase):
 
     def test_html_has_browse_buttons(self):
         from lexicon.webui import HTML_PAGE
-        self.assertIn("浏览…", HTML_PAGE)
+        self.assertIn("Browse…", HTML_PAGE)
         self.assertIn("doBrowse('source')", HTML_PAGE)
         self.assertIn("doBrowse('output')", HTML_PAGE)
         self.assertIn("/api/browse", HTML_PAGE)
