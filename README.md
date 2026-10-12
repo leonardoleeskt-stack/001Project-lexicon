@@ -1,6 +1,6 @@
 # 001Project Personal Lexicon
 
-**One folder of terms → one Microsoft Pinyin `.dat`. Local only. Works offline. No ads.**
+**One folder of terms → one Microsoft Pinyin `.dat`. Local only. Works offline. No ads. Sensitive terms held back for review before export.**
 
 Pick a small folder you authorize → scan short words / proper nouns → you confirm → export `UserDefinedPhrase.dat` for Microsoft Pinyin. No cloud, no full-disk scan, no silent IME writes. Windows only. **v0.1 trial.**
 
@@ -26,12 +26,13 @@ Chinese docs / domestic mirror: Gitee edition in progress (link TBD).
 - **No** auto-write to the IME system lexicon — you import the `.dat` yourself
 - **No** cloud upload
 - Browse a folder; confirm before export
+- Sensitive / uncertain terms are held back until you review and confirm
 
 ## Features
 
 - Double-click `Start.bat` to open the browser UI (no tkinter)
 - **Browse…** for glossary folder and output directory
-- Sensitive / uncertain terms held back until you confirm export
+- Sensitive-term filtering: sensitive / uncertain terms held back for review before export
 - Works fully offline; no ads
 
 ## Usage (Windows)
